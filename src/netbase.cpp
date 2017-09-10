@@ -8,7 +8,7 @@
 #include "util.h"
 
 #ifndef WIN32
-#include <sys/fcntl.h>
+#include <sys/SFCtl.h>
 #endif
 
 #include "strlcpy.h"
@@ -345,8 +345,8 @@ bool static ConnectSocketDirectly(const CService &addrConnect, SOCKET& hSocketRe
     u_long fNonblock = 1;
     if (ioctlsocket(hSocket, FIONBIO, &fNonblock) == SOCKET_ERROR)
 #else
-    int fFlags = fcntl(hSocket, F_GETFL, 0);
-    if (fcntl(hSocket, F_SETFL, fFlags | O_NONBLOCK) == -1)
+    int fFlags = SFCtl(hSocket, F_GETFL, 0);
+    if (SFCtl(hSocket, F_SETFL, fFlags | O_NONBLOCK) == -1)
 #endif
     {
         closesocket(hSocket);
@@ -415,8 +415,8 @@ bool static ConnectSocketDirectly(const CService &addrConnect, SOCKET& hSocketRe
     fNonblock = 0;
     if (ioctlsocket(hSocket, FIONBIO, &fNonblock) == SOCKET_ERROR)
 #else
-    fFlags = fcntl(hSocket, F_GETFL, 0);
-    if (fcntl(hSocket, F_SETFL, fFlags & !O_NONBLOCK) == SOCKET_ERROR)
+    fFlags = SFCtl(hSocket, F_GETFL, 0);
+    if (SFCtl(hSocket, F_SETFL, fFlags & !O_NONBLOCK) == SOCKET_ERROR)
 #endif
     {
         closesocket(hSocket);
